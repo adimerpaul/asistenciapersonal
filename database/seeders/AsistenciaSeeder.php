@@ -17,7 +17,7 @@ class AsistenciaSeeder extends Seeder
         DB::table('asistencias')->insert([
                 ['persona_id'=>1,'tipo'=>'ENTRADA','created_at'=>now(),'nombre'=>'JUAN PEREZ','unidad'=>'UNIDAD DE SISTEMAS','unit_id'=>1],
                 ['persona_id'=>2,'tipo'=>'ENTRADA','created_at'=>now(),'nombre'=>'MARIA CALLE','unidad'=>'UNIDAD DE SISTEMAS','unit_id'=>1],
-                ['persona_id'=>1,'tipo'=>'SALIDA','created_at'=>now(),'nombre'=>'JUAN PEREZ','unidad'=>'UNIDAD DE SISTEMAS','unit_id'=>1]
+//                ['persona_id'=>1,'tipo'=>'SALIDA','created_at'=>now(),'nombre'=>'JUAN PEREZ','unidad'=>'UNIDAD DE SISTEMAS','unit_id'=>1]
             ]);
     }
 }

@@ -25,8 +25,8 @@
                                 </div>
                                 <div class="col-sm-12">
 <!--                                    <button type="submit" class="btn btn-success" data-dismiss="modal"><i class="fa fa-credit-card"></i></button>-->
-                                    <h5 class="h5 p-2">{{ultimo.persona.nombre}} <span class="badge" :class="ultimo.tipo=='ENTRADA'?'badge-success':'badge-danger'">{{ultimo.tipo}}</span> {{ moment(ultimo.created_at).format("HH:mm") }}</h5>
-
+<!--                                    <h5 class="h5 p-2">{{ultimo.persona.nombre}} <span class="badge" :class="ultimo.tipo=='ENTRADA'?'badge-success':'badge-danger'">{{ultimo.tipo}}</span> {{ moment(ultimo.created_at).format("HH:mm") }}</h5>-->
+                                    <h5 class="h5 p-2 text-center">{{ultimo.asistencia.nombre}} {{ultimo.hora}} <span class="badge" :class="ultimo.estado=='ENTRADA'?'badge-success':'badge-danger'">{{ultimo.estado}}</span></h5>
                                 </div>
                             </div>
 <!--                            <div class="modal-footer">-->
@@ -49,11 +49,11 @@
                             <tr v-for="(i,index) in asistencias" :key="index">
                                 <th scope="row">{{index+1}}</th>
                                 <td>{{i.nombre}}</td>
-                                <td>{{i.unit.unidad}}</td>
-                                <td>{{i.targeta}}</td>
+                                <td>{{i.unidad}}</td>
+                                <td>{{i.persona.targeta}}</td>
                                 <td>
                                     <div class="btn btn-group">
-                                        <span class="btn btn-sm  text-white" v-for="(j,index) in i.asistencia " :class="j.tipo=='ENTRADA'?'btn-success':'btn-danger'" :key="index">{{j.tipo.slice(0,1)}}</span>
+                                        <span class="btn btn-sm  text-white" v-for="(j,index) in i.logs " :class="j.estado=='ENTRADA'?'btn-success':'btn-danger'" :key="index">{{j.estado.slice(0,1)}}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -97,7 +97,7 @@ import moment from 'moment'
               asistencias:[],
               targeta:'',
               moment: moment,
-              ultimo:{persona:{},tipo:'',created_at:'00:00'},
+              ultimo:{asistencia:{}},
               // moment:moment()
 
 
@@ -129,16 +129,14 @@ import moment from 'moment'
 
                     // }
                     // if (res.data.length>0)
+
                     if (res.data=='Targeta no registrada a un personal'){
-                        this.$swal({
-                            title: "Error",
-                            text: 'Targeta no registrada a un personal',
-                            icon: "error",
-                            timer: 1000
-                        })
                         this.targeta='';
-                        this.ultimo={persona:{},tipo:'',created_at:'00:00'};
-                    }else {
+                        this.ultimo={asistencia:{nombre:'TARGETA NO ENCONTRADA'},unidad:'TARGETA NO ENCONTRADA',hora:'00:00:00',estado:'TARGETA NO ENCONTRADA'};
+                    }else if(res.data=='Solo se permite 2 asistencias'){
+                        this.targeta='';
+                        this.ultimo={asistencia:{nombre:'Solo se permite 2 asistencias'},unidad:'Solo se permite 2 asistencias',hora:'00:00:00',estado:'Solo se permite 2 asistencias'};
+                    } else{
                         this.ultimo=res.data;
 
                         this.targeta='';

@@ -11,4 +11,7 @@ class Asistencia extends Model
     function persona(){
         return $this->belongsTo(Persona::class);
     }
+    function logs(){
+        return $this->hasMany(Log::class);
+    }
 }

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             PersonaSeeder::class,
             AsistenciaSeeder::class,
+            LogSeeder::class,
         ]);
     }
 }

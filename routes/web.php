@@ -32,4 +32,5 @@ Auth::routes();
 Route::apiResource('/persona', \App\Http\Controllers\PersonaController::class)->middleware('auth');
 Route::apiResource('/unit', \App\Http\Controllers\UnitController::class)->middleware('auth');
 Route::apiResource('/asistencia', \App\Http\Controllers\AsistenciaController::class);
-Route::get('/buscar', [\App\Http\Controllers\AsistenciaController::class,'buscar']);
+Route::apiResource('/log', \App\Http\Controllers\LogController::class);
+Route::post('/buscar', [\App\Http\Controllers\AsistenciaController::class,'buscar']);

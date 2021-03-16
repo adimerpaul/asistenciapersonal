@@ -6,9 +6,9 @@
                     <div class="card-header bg-danger text-white"><i class="fa fa-print"></i> Imprimir Asistencia de trabajo</div>
                     <div class="card-body">
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-success mb-2" data-toggle="modal" data-target="#exampleModal">
-                            <i class="fa fa-plus-circle"></i> Agregar dia de de sistencias
-                        </button>
+<!--                        <button type="button" class="btn btn-success mb-2" data-toggle="modal" data-target="#exampleModal">-->
+<!--                            <i class="fa fa-plus-circle"></i> Agregar dia de  asistencias-->
+<!--                        </button>-->
                         <form @submit.enter.prevent="buscar">
                             <div class="form-group row">
                                 <label for="mes" class="col-sm-1 col-form-label">Mes</label>
@@ -39,33 +39,17 @@
                                 </div>
                             </div>
                         </form>
-                        <table id="example" class="display" style="width:100%">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombre</th>
-                                <th>Unidad</th>
-                                <th>Targeta</th>
-                                <th>Fecha creado</th>
-                                <th>Opciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(i,index) in personas" :key="index">
-                                <td>{{index+1}}</td>
-                                <td>{{i.nombre}}</td>
-                                <td>{{i.unit.unidad}}</td>
-                                <td>{{i.targeta}}</td>
-                                <td>{{i.created_at|moment('DD-MM-YY')}}</td>
-                                <td>
-                                    <div class="btn btn-group">
-                                        <button @click.prevent="modificar(i)" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></button>
-                                        <button @click.prevent="eliminar(i)"  class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div v-for="(i,index) in datos" :key="index">
+                            <h4 class="text-center" v-if="i.fecha!=null" > {{moment(i.fecha).format('DD')}} {{moment(i.fecha).format('MMM').toUpperCase()}} {{moment(i.fecha).format('YYYY')}}</h4>
+                            <table class="table table-border">
+                                <tr  v-for="(j,index) in i.asistencia" :key="index">
+                                    <td>{{j.nombre}}</td>
+                                    <td>{{j.unidad}}</td>
+                                    <td v-for="(k,index) in j.logs" :key="index">{{k.hora}} <span  class="badge" :class="k.estado=='ENTRADA'?'badge-success':'badge-danger'">{{k.estado}} <i @click="eliminar(k)" class="fa fa-times"></i></span></td>
+                                </tr>
+                            </table>
+                        </div>
+
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -147,7 +131,6 @@
                                             </div>
                                         </form>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -164,8 +147,10 @@ import moment from 'moment';
     export default {
         data(){
           return {
+              moment:moment,
               units:[],
               dato:{},
+              datos:[],
               personas:[],
               persona:{},
               mes:[
@@ -202,8 +187,10 @@ import moment from 'moment';
             },
             buscar(){
                 // this.persona={};
+                this.datos=[];
                 axios.post('/buscar',this.dato).then(res=>{
-                    console.log(res.data)
+                    console.log(res.data);
+                    this.datos=res.data;
                 });
 
             },
@@ -252,10 +239,11 @@ import moment from 'moment';
                     }).then((result) => { // <--
                         if (result.value) { // <-- if confirmed
                             // del('status-delete/' + id);
-                            axios.delete('/persona/'+id).then(res=>{
+                            axios.delete('/log/'+id).then(res=>{
                                 // $('#modificar').modal('hide');
                                 // this.persona={};
-                                this.misdatos();
+                                // this.misdatos();
+                                this.buscar();
                                 this.$swal('Eliminado!!!','Correctamente','success');
                             })
                         }
