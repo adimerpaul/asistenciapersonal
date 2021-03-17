@@ -39,16 +39,19 @@ class AsistenciaController extends Controller
         $fechas = DB::table('asistencias')
             ->select('fecha')//, DB::raw('count(*) as total'))
             ->groupBy('fecha')
-            ->where('unit_id',$request->unit_id)
-            ->whereYear('created_at', $request->anio)
-            ->whereMonth('created_at', $request->mes)
+//            ->where('unit_id',$request->unit_id)
+//            ->whereYear('created_at', $request->anio)
+//            ->whereMonth('created_at', $request->mes)
             ->get();
+//        return $fechas;
         $dat = array();
         foreach ($fechas as $key => $fecha) {
-            $dat['fecha'] = $fecha->fecha;
-            $dat['asistencia']=Asistencia::with('logs')->where('unit_id',$request->unit_id)->whereDate('created_at',$fecha->fecha)->get();
+            $a=array();
+            $a['fecha'] = $fecha->fecha;
+            $a['asistencia']=Asistencia::with('logs')->where('unit_id',$request->unit_id)->whereDate('created_at',$fecha->fecha)->get();
+            $dat[]=$a;
         }
-        return [$dat];
+        return $dat;
 //        return $fechas;
 //        return Asistencia::with('logs')->get();
 //        return Asistencia::with('persona')->whereDate('created_at',now())->get();
@@ -121,12 +124,15 @@ class AsistenciaController extends Controller
                 $as->tipo='ENTRADA';
                 $unidad=Unit::where('id',$pe->unit_id)->first();
                 $as->persona_id=$pe->id;
+                $as->fecha=now();
                 $as->nombre=$pe->nombre;
                 $as->unidad=$unidad->unidad;
                 $as->unit_id=$pe->unit_id;
                 $as->save();
                 $l=new Log();
                 $l->estado='ENTRADA';
+                $l->fecha=now();
+                $l->hora=now();
                 $l->asistencia_id=$as->id;
                 $l->save();
                 //return Asistencia::where('id',$as->id)->with('persona')->with('logs')->first();
@@ -147,6 +153,8 @@ class AsistenciaController extends Controller
                     $l=new Log();
                     $l->estado='ENTRADA';
                 }
+                $l->fecha=now();
+                $l->hora=now();
                 $l->asistencia_id=$a->id;
                 $l->save();
                 return Log::with('asistencia')->where('id',$l->id)->first();
