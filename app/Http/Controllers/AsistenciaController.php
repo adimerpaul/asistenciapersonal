@@ -39,9 +39,9 @@ class AsistenciaController extends Controller
         $fechas = DB::table('asistencias')
             ->select('fecha')//, DB::raw('count(*) as total'))
             ->groupBy('fecha')
-//            ->where('unit_id',$request->unit_id)
-//            ->whereYear('created_at', $request->anio)
-//            ->whereMonth('created_at', $request->mes)
+            ->where('unit_id',$request->unit_id)
+            ->whereYear('created_at', $request->anio)
+            ->whereMonth('created_at', $request->mes)
             ->get();
 //        return $fechas;
         $dat = array();
