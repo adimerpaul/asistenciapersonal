@@ -9,6 +9,9 @@
                         <button type="button" class="btn btn-success mb-2" data-toggle="modal" data-target="#exampleModal">
                             <i class="fa fa-plus-circle"></i> Agregar nuevo personal
                         </button>
+                        <button type="button" class="btn btn-success mb-2" @click="pdf()" >
+                            <i class="fa fa-print"></i> credencial
+                        </button>
                         <table id="example" class="display" style="width:100%">
                             <thead>
                             <tr>
@@ -130,6 +133,7 @@
 </template>
 
 <script>
+    import jsPDF from 'jspdf'
 import datatable from 'datatables.net-dt';
     export default {
         data(){
@@ -150,6 +154,35 @@ import datatable from 'datatables.net-dt';
             })
         },
         methods:{
+            pdf(){
+                const doc = new jsPDF();
+                var img = new Image();
+                img.src = 'assets/credencial.png';
+                let x=5,y=5;
+                let cont=0;
+                this.personas.forEach(r=>{
+                    if (cont==3){
+                        y=y+95;
+                        x=5;
+                        cont=0;
+                    }
+                    doc.addImage(img, 'png', x, y, 60, 90);
+                    x=x+65;
+                    doc.setFont("helvetica");
+                    // doc.setFontType("bold");
+                    // doc.setFontType("bold");
+                    doc.setFontSize(10);
+                    doc.setTextColor(255,255,255);
+                    // doc.text(r.nombre, x-50, y+80);
+                    doc.text(r.nombre, x-35, y+76, "center");
+                    doc.text(r.unit.unidad, x-35, y+81, "center");
+                    // console.log(r.nombre);
+                    cont++;
+                });
+                doc.save("a4.pdf");
+                //doc.autoPrint();
+                //window.open(doc.output('datauristring',{'a4.pdf'}));
+            },
             crear(){
                 this.persona={};
             },
@@ -211,6 +244,7 @@ import datatable from 'datatables.net-dt';
                 $('#example').DataTable().destroy();
                 axios.get('/persona').then(res=>{
                     this.personas=res.data;
+                    console.log(this.personas);
                     this.$nextTick(()=>{
                         $('#example').DataTable();
                     })

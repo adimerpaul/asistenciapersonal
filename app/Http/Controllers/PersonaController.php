@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Persona;
 use Illuminate\Http\Request;
-
+use PDF;
 class PersonaController extends Controller
 {
     /**
@@ -48,9 +48,16 @@ class PersonaController extends Controller
      * @param  \App\Models\Persona  $persona
      * @return \Illuminate\Http\Response
      */
-    public function show(Persona $persona)
+    public function show($id)
     {
-        //
+        PDF::SetTitle('Hello World');
+        PDF::AddPage();
+        PDF::Write(0, 'Hello World');
+        PDF::Output('hello_world.pdf','I');
+//        return $id;
+    }
+    public function credencial(Request $request){
+        return "a";
     }
 
     /**
