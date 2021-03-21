@@ -30,7 +30,7 @@ Auth::routes();
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::apiResource('/persona', \App\Http\Controllers\PersonaController::class)->middleware('auth');
-Route::post('/credencial', [\App\Http\Controllers\PersonaController::class,'credencial'])->middleware('auth');
+Route::post('/photo', [\App\Http\Controllers\PersonaController::class,'photo'])->middleware('auth');
 Route::apiResource('/unit', \App\Http\Controllers\UnitController::class)->middleware('auth');
 Route::apiResource('/asistencia', \App\Http\Controllers\AsistenciaController::class);
 Route::apiResource('/log', \App\Http\Controllers\LogController::class);

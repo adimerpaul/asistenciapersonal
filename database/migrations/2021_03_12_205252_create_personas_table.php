@@ -16,6 +16,7 @@ class CreatePersonasTable extends Migration
         Schema::create('personas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->string('foto')->nullable();
             $table->string('targeta')->unique();
             $table->unsignedBigInteger('unit_id');
             $table->foreign('unit_id')->references('id')->on('units');

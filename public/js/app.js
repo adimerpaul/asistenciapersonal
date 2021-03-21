@@ -2529,6 +2529,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2536,7 +2566,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       units: [],
       persona: {},
-      personas: []
+      personas: [],
+      imagen: null
     };
   },
   mounted: function mounted() {
@@ -2550,6 +2581,31 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
+    getImage: function getImage(event) {
+      //Asignamos la imagen a  nuestra data
+      this.imagen = event.target.files[0];
+    },
+    updateAvatar: function updateAvatar() {
+      var _this2 = this;
+
+      //Creamos el formData
+      var data = new FormData(); //Añadimos la imagen seleccionada
+
+      data.append('avatar', this.imagen);
+      data.append('id', this.persona.id); //Añadimos el método PUT dentro del formData
+      // Como lo hacíamos desde un formulario simple _(no ajax)_
+      // data.append('_method', 'PUT');
+      //Enviamos la petición
+
+      axios.post('/photo', data).then(function (response) {
+        $('#photo').modal('hide');
+        _this2.persona = {};
+
+        _this2.misdatos();
+
+        _this2.$swal('Creado!!!', 'Correctamente', 'success');
+      });
+    },
     pdf: function pdf() {
       var doc = new jspdf__WEBPACK_IMPORTED_MODULE_0__.default();
       var img = new Image();
@@ -2557,6 +2613,7 @@ __webpack_require__.r(__webpack_exports__);
       var x = 5,
           y = 5;
       var cont = 0;
+      var conth = 0;
       this.personas.forEach(function (r) {
         if (cont == 3) {
           y = y + 95;
@@ -2564,7 +2621,22 @@ __webpack_require__.r(__webpack_exports__);
           cont = 0;
         }
 
+        if (conth == 9) {
+          y = 5;
+          x = 5;
+          doc.addPage();
+          conth = 0;
+        }
+
         doc.addImage(img, 'png', x, y, 60, 90);
+        console.log(r.foto);
+
+        if (r.foto != null) {
+          var img2 = new Image();
+          img2.src = r.foto;
+          doc.addImage(img2, r.foto.substr(-3), x + 19, y + 29, 22, 27);
+        }
+
         x = x + 65;
         doc.setFont("helvetica"); // doc.setFontType("bold");
         // doc.setFontType("bold");
@@ -2576,24 +2648,25 @@ __webpack_require__.r(__webpack_exports__);
         doc.text(r.unit.unidad, x - 35, y + 81, "center"); // console.log(r.nombre);
 
         cont++;
+        conth++;
       });
-      doc.save("a4.pdf"); //doc.autoPrint();
+      doc.save("credenciales.pdf"); //doc.autoPrint();
       //window.open(doc.output('datauristring',{'a4.pdf'}));
     },
     crear: function crear() {
       this.persona = {};
     },
     guardar: function guardar() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post('/persona', this.persona).then(function (res) {
         // this.personas=res.data;
-        _this2.misdatos();
+        _this3.misdatos();
 
         $('#exampleModal').modal('hide');
-        _this2.persona = {};
+        _this3.persona = {};
 
-        _this2.$swal('Creado!!!', 'Correctamente', 'success');
+        _this3.$swal('Creado!!!', 'Correctamente', 'success');
       });
     },
     modificar: function modificar(i) {
@@ -2605,21 +2678,25 @@ __webpack_require__.r(__webpack_exports__);
       //     this.persona={};
       // })
     },
+    photo: function photo(i) {
+      this.persona = i;
+      $('#photo').modal('show');
+    },
     update: function update() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.put('/persona/' + this.persona.id, this.persona).then(function (res) {
         // this.personas=res.data;
-        _this3.misdatos();
+        _this4.misdatos();
 
         $('#modificar').modal('hide');
-        _this3.persona = {};
+        _this4.persona = {};
 
-        _this3.$swal('Modificado!!!', 'Correctamente', 'success');
+        _this4.$swal('Modificado!!!', 'Correctamente', 'success');
       });
     },
     eliminar: function eliminar(i) {
-      var _this4 = this;
+      var _this5 = this;
 
       var id = i.id; // this.personas=res.data;
       // $('#modificar').modal('hide');
@@ -2640,22 +2717,22 @@ __webpack_require__.r(__webpack_exports__);
           axios["delete"]('/persona/' + id).then(function (res) {
             // $('#modificar').modal('hide');
             // this.persona={};
-            _this4.misdatos();
+            _this5.misdatos();
 
-            _this4.$swal('Eliminado!!!', 'Correctamente', 'success');
+            _this5.$swal('Eliminado!!!', 'Correctamente', 'success');
           });
         }
       });
     },
     misdatos: function misdatos() {
-      var _this5 = this;
+      var _this6 = this;
 
       $('#example').DataTable().destroy();
       axios.get('/persona').then(function (res) {
-        _this5.personas = res.data;
-        console.log(_this5.personas);
+        _this6.personas = res.data;
+        console.log(_this6.personas);
 
-        _this5.$nextTick(function () {
+        _this6.$nextTick(function () {
           $('#example').DataTable();
         });
       });
@@ -88595,6 +88672,20 @@ var render = function() {
                               }
                             },
                             [_c("i", { staticClass: "fa fa-trash" })]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-sm btn-primary",
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.photo(i)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-image" })]
                           )
                         ])
                       ])
@@ -88989,6 +89080,71 @@ var render = function() {
                   ]
                 )
               ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "modal fade",
+                attrs: {
+                  id: "photo",
+                  tabindex: "-1",
+                  role: "dialog",
+                  "aria-labelledby": "photoLabel",
+                  "aria-hidden": "true"
+                }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "modal-dialog", attrs: { role: "document" } },
+                  [
+                    _c("div", { staticClass: "modal-content" }, [
+                      _vm._m(7),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c(
+                          "form",
+                          {
+                            on: {
+                              submit: function($event) {
+                                $event.preventDefault()
+                                return _vm.updateAvatar($event)
+                              }
+                            }
+                          },
+                          [
+                            _c("div", { staticClass: "form-group row" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass: "col-sm-2 col-form-label",
+                                  attrs: { for: "nombre2" }
+                                },
+                                [_vm._v("Nombre")]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-sm-10" }, [
+                                _c("input", {
+                                  attrs: {
+                                    type: "file",
+                                    name: "image",
+                                    accept: "image/*",
+                                    required: ""
+                                  },
+                                  on: { change: _vm.getImage }
+                                })
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _vm._m(8)
+                          ]
+                        )
+                      ])
+                    ])
+                  ]
+                )
+              ]
             )
           ])
         ])
@@ -89108,6 +89264,51 @@ var staticRenderFns = [
           _vm._v(" Modificar Nuevo personal")
         ]
       ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-danger",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_c("i", { staticClass: "fa fa-trash" }), _vm._v(" Cancelar")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "btn btn-warning", attrs: { type: "submit" } },
+        [_c("i", { staticClass: "fa fa-edit" }), _vm._v(" Modificar")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header bg-warning " }, [
+      _c("h5", { staticClass: "modal-title", attrs: { id: "photoLabel" } }, [
+        _c("i", { staticClass: "fa fa-edit" }),
+        _vm._v(" Fotofrafia personal")
+      ]),
       _vm._v(" "),
       _c(
         "button",

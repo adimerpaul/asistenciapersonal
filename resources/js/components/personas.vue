@@ -34,6 +34,7 @@
                                     <div class="btn btn-group">
                                         <button @click.prevent="modificar(i)" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></button>
                                         <button @click.prevent="eliminar(i)"  class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                        <button @click.prevent="photo(i)"  class="btn btn-sm btn-primary"><i class="fa fa-image"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -125,6 +126,35 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="photo" tabindex="-1" role="dialog" aria-labelledby="photoLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-warning ">
+                                        <h5 class="modal-title" id="photoLabel"> <i class="fa fa-edit"></i> Fotofrafia personal</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form @submit.prevent="updateAvatar">
+                                            <div class="form-group row">
+                                                <label for="nombre2" class="col-sm-2 col-form-label">Nombre</label>
+                                                <div class="col-sm-10">
+<!--                                                    <input type="text" class="form-control" id="nombre2" v-model="persona.nombre" placeholder="Nombre Completo" required>-->
+                                                    <input type="file" name="image" @change="getImage" accept="image/*" required>
+<!--                                                    <button @click="updateAvatar">Subir Imagen</button>-->
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash"></i> Cancelar</button>
+                                                <button type="submit" class="btn btn-warning"> <i class="fa fa-edit"></i> Modificar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -141,11 +171,10 @@ import datatable from 'datatables.net-dt';
               units:[],
               persona:{},
               personas:[],
+              imagen : null,
           }
         },
         mounted() {
-
-
             // console.log('Component mounted.')
             // $("#example").DataTable();
             this.misdatos();
@@ -154,19 +183,53 @@ import datatable from 'datatables.net-dt';
             })
         },
         methods:{
+            getImage(event){
+                //Asignamos la imagen a  nuestra data
+                this.imagen = event.target.files[0];
+            },
+            updateAvatar(){
+                //Creamos el formData
+                var data = new  FormData();
+                //Añadimos la imagen seleccionada
+                data.append('avatar', this.imagen);
+                data.append('id', this.persona.id);
+                //Añadimos el método PUT dentro del formData
+                // Como lo hacíamos desde un formulario simple _(no ajax)_
+                // data.append('_method', 'PUT');
+                //Enviamos la petición
+                axios.post('/photo',data).then(response => {
+                    $('#photo').modal('hide');
+                    this.persona={};
+                    this.misdatos();
+                    this.$swal('Creado!!!','Correctamente','success');
+                })
+            },
             pdf(){
                 const doc = new jsPDF();
                 var img = new Image();
                 img.src = 'assets/credencial.png';
                 let x=5,y=5;
                 let cont=0;
+                let conth=0;
                 this.personas.forEach(r=>{
                     if (cont==3){
                         y=y+95;
                         x=5;
                         cont=0;
                     }
+                    if (conth==9){
+                        y=5;
+                        x=5;
+                        doc.addPage();
+                        conth=0;
+                    }
                     doc.addImage(img, 'png', x, y, 60, 90);
+                    console.log(r.foto);
+                    if(r.foto!=null){
+                        var img2 = new Image();
+                        img2.src = r.foto;
+                        doc.addImage(img2, r.foto.substr(-3), x+19, y+29, 22, 27);
+                    }
                     x=x+65;
                     doc.setFont("helvetica");
                     // doc.setFontType("bold");
@@ -178,8 +241,9 @@ import datatable from 'datatables.net-dt';
                     doc.text(r.unit.unidad, x-35, y+81, "center");
                     // console.log(r.nombre);
                     cont++;
+                    conth++;
                 });
-                doc.save("a4.pdf");
+                doc.save("credenciales.pdf");
                 //doc.autoPrint();
                 //window.open(doc.output('datauristring',{'a4.pdf'}));
             },
@@ -204,6 +268,10 @@ import datatable from 'datatables.net-dt';
                 //     $('#exampleModal').modal('hide');
                 //     this.persona={};
                 // })
+            },
+            photo(i){
+                this.persona=i;
+                $('#photo').modal('show');
             },
             update(){
                 axios.put('/persona/'+this.persona.id,this.persona).then(res=>{

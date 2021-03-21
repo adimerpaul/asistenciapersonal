@@ -16,20 +16,37 @@ class PersonaSeeder extends Seeder
     {
         DB::table('personas')->insert([
             [
-                'nombre'=>'JUAN PEREZ',
-                'targeta'=>'14738893',
+                'nombre'=>'Freddy Leon Caro Coca',
+                'targeta'=>'1',
+                'foto'=>'avatars/1.jpg',
                 'unit_id'=>1,
                 'created_at'=>now()
             ],
             [
-                'nombre'=>'MARIA CALLE',
-                'targeta'=>'14906023',
+                'nombre'=>'Javier Guzmán León',
+                'targeta'=>'2',
+                'foto'=>'avatars/2.jpg',
                 'unit_id'=>1,
                 'created_at'=>now()
             ],
             [
-                'nombre'=>'MARIEL COCA',
-                'targeta'=>'07735693',
+                'nombre'=>'Néstor Alejandro Benítez Diaz',
+                'targeta'=>'3',
+                'foto'=>'avatars/3.jpg',
+                'unit_id'=>1,
+                'created_at'=>now()
+            ],
+            [
+                'nombre'=>'Sergio Gualberto Cruz Condori',
+                'targeta'=>'4',
+                'foto'=>'avatars/4.png',
+                'unit_id'=>1,
+                'created_at'=>now()
+            ],
+            [
+                'nombre'=>'Elmer Flores Miranda',
+                'targeta'=>'5',
+                'foto'=>'avatars/5.jpg',
                 'unit_id'=>1,
                 'created_at'=>now()
             ],

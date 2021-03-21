@@ -71,6 +71,13 @@ class PersonaController extends Controller
         //
     }
 
+    public function photo(Request $request){
+        $p= Persona::find($request->id);
+        $path = $request->file('avatar')->store('avatars');
+//        return $path;
+        $p->foto=$path;
+        $p->save();
+    }
     /**
      * Update the specified resource in storage.
      *
