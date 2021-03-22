@@ -158,7 +158,7 @@ import moment from 'moment'
             },
             time() {
                 var self = this
-                this.datenow = moment().format("dddd,MM  MMMM  YYYY, h:mm:ss a")
+                this.datenow = moment().format("dddd,DD  MMMM  YYYY, h:mm:ss a")
                 this.calendarData=moment();
                 setInterval(self.time, 1000)
             },
